@@ -36,40 +36,54 @@ class _homeState extends State<home> {
     'Cart',
     'Account',
   ];
-
-  bool fav_pressed=false;
-  bool cart_pressed=false;
+  double screenWidth=0;
   TextEditingController? search_value ;
   bool ispressed=true;
   String app_name='hello';
   bool notification= true;
   Color online=Colors.green;
   Color pressed=Color.fromRGBO(2, 63, 40, 1);
-  List slideShow=["Assets/Images/Sale Promotion Digital Display HD - Made with PosterMyWall.gif"];
+  List slideShow=["Assets/Images/Sale Promotion Digital Display HD - Made with PosterMyWall.gif",
+    "Assets/Images/Huge Sale Twitter Share Post Template - Made with PosterMyWall (2).gif"];
   String Image_url= "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500";
   int current_index=0;
   List<IconData> navbar_icons=[FontAwesomeIcons.home,MdiIcons.earth,MdiIcons.cartOutline,FontAwesomeIcons.userCircle];
-
-
+  List<products> fav=[];
+  List<products> cart=[];
+  List<products> home_products=[
+    products('Cookies', 50, 'https://th.bing.com/th/id/OIP.6e8n0Naqmwjg-IbT1UjkewHaE6?pid=ImgDet&rs=1','Food',false,false ),
+    products('Cookies', 50, 'https://th.bing.com/th/id/OIP.6e8n0Naqmwjg-IbT1UjkewHaE6?pid=ImgDet&rs=1','Food' ,false,false),
+  ];
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    List<products> home_products=[
-      products('Cookies', 50, 'https://th.bing.com/th/id/OIP.6e8n0Naqmwjg-IbT1UjkewHaE6?pid=ImgDet&rs=1','Food',screenWidth*0.6 ),
-      products('Cookies', 50, 'https://th.bing.com/th/id/OIP.6e8n0Naqmwjg-IbT1UjkewHaE6?pid=ImgDet&rs=1','Food',screenWidth*0.6 ),
-    ];
+    final screenWidth1 = MediaQuery.of(context).size.width;
+    screenWidth=screenWidth1;
     List<Widget> Slidshow=slideShow.map((url) =>Image.asset(url),).toList();
+    List<Widget> pages=[home_page(screenWidth1, Slidshow,home_products),fav_page(screenWidth1,home_products),Container(),cart_page(screenWidth,home_products),Container()];
     return Scaffold(
-      backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
-          '$app_name',
-          style: const TextStyle(
-            fontFamily: 'Sweety',
-            color: Colors.black,
-            fontSize: 30.0,
-          ),
+        title: Row(
+          children: [
+            Text(
+              '$app_name',
+              style: const TextStyle(
+                fontFamily: 'Sweety',
+                color: Colors.black,
+                fontSize: 30.0,
+              ),
+            ),
+            SizedBox(width: screenWidth1*0.1,),
+            Text(
+              '${listOfStrings[current_index]}',
+              style: const TextStyle(
+                fontFamily: 'Sweety',
+                color: Colors.grey,
+                fontSize: 30.0,
+              ),
+            ),
+
+          ],
         ) ,
         elevation: 0,
         actions: [IconButton(
@@ -116,29 +130,23 @@ class _homeState extends State<home> {
       ),
 
       body: Container(
-        color: Colors.transparent,
-        child: page1(screenWidth, Slidshow,home_products),
+        color: Colors.white,
+        child: pages.elementAt(current_index),
       ),
 
       bottomNavigationBar:Container(
-        margin: EdgeInsetsDirectional.all(screenWidth*0.01),
-        height: screenWidth*0.1,
+        margin: EdgeInsetsDirectional.all(screenWidth1*0.03),
+        height: screenWidth1*0.2,
         decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
-                  offset: Offset(-15,30),
-                  blurRadius: 50
-              )
-            ],
+
           color: Colors.black,
-          borderRadius: BorderRadius.circular(screenWidth*0.1)
+          borderRadius: BorderRadius.circular(screenWidth1*0.1)
         ),
         child: ListView.builder(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * .02),
+          padding: EdgeInsets.symmetric(horizontal: screenWidth1 * .02),
           scrollDirection: Axis.horizontal,
           itemCount: 5,
-          itemBuilder: (context,index)=>navBar(index, screenWidth)
+          itemBuilder: (context,index)=>navBar(index, screenWidth1)
         ),
       ),
     );
@@ -155,14 +163,14 @@ class _homeState extends State<home> {
           borderRadius: BorderRadius.circular(30.0),
           color: Colors.black,
         ),
-        height: p.height,
+        height: screenWidth*0.6,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(30.0),
           child: Stack(
             alignment: Alignment.topCenter,
             children: [
               Container(
-                height: p.height,
+                height: screenWidth*0.6,
                 child: Image.network(
                   '${p.product_img}',
                   fit: BoxFit.cover,
@@ -210,12 +218,13 @@ class _homeState extends State<home> {
                     children: [
                       IconButton(onPressed: (){
                         setState(() {
-                          cart_pressed=!cart_pressed;
+                          p.cart=!p.cart;
+                          p.cart?cart.add(p):cart.remove(p);
                         });
                       },
                         icon: Icon(
                           Icons.shopping_cart_sharp,
-                          color: cart_pressed? Colors.lightBlueAccent:Colors.white70,
+                          color: p.cart? Colors.lightBlueAccent:Colors.white70,
                           size: 30.0,
                         ),
                       ),
@@ -229,14 +238,14 @@ class _homeState extends State<home> {
                       ),
                       IconButton(
                         onPressed: (){
-                          print('object');
                           setState(() {
-                            fav_pressed=!fav_pressed;
+                            p.fav=!p.fav;
+                            p.fav?fav.add(p):fav.remove(p);
                           });
                         },
                         icon: Icon(
                           Icons.favorite,
-                          color: fav_pressed? Color.fromRGBO(255, 33, 131, 1.0):Colors.white70,
+                          color: p.fav? Color.fromRGBO(255, 33, 131, 1.0):Colors.white70,
                           size: 30.0,
                         ),
                       ),
@@ -250,7 +259,7 @@ class _homeState extends State<home> {
       ),
     );
   }
-  Widget page1( screenWidth,Slidshow,home_products)
+  Widget home_page( screenWidth,Slidshow,home_products)
   {
     return Padding(
       padding: EdgeInsetsDirectional.all(20.0),
@@ -311,7 +320,7 @@ class _homeState extends State<home> {
                     borderRadius: BorderRadius.circular(screenWidth*0.2),
                     child: ImageSlideshow(
                       children: Slidshow,
-                      autoPlayInterval: 3000,
+                      autoPlayInterval: 4000,
                     ),
                   ),
                 )
@@ -386,6 +395,49 @@ class _homeState extends State<home> {
     );
   }
 
+  Widget fav_page(screenWidth,home_products)
+  {
+    return Padding(
+      padding: EdgeInsetsDirectional.all(20.0),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            ListView.separated(
+              itemBuilder: (context,index1)=>product(fav[index1]),
+              separatorBuilder: (context,index)=>const SizedBox(
+                height: 20.0,
+              ),
+              itemCount: fav.length,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget cart_page(screenWidth,home_products)
+  {
+    return Padding(
+      padding: EdgeInsetsDirectional.all(20.0),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            ListView.separated(
+              itemBuilder: (context,index1)=>Cart_product(cart[index1],index1),
+              separatorBuilder: (context,index)=>const SizedBox(
+                height: 20.0,
+              ),
+              itemCount: cart.length,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,),
+          ],
+        ),
+      ),
+    );
+  }
   Widget navBar(index,screenWidth)
   {
     return InkWell(
@@ -402,14 +454,14 @@ class _homeState extends State<home> {
             duration: Duration(seconds: 1),
             curve: Curves.fastLinearToSlowEaseIn,
             width: index == current_index
-                ? screenWidth * .23
-                : screenWidth * .15,
+                ? screenWidth * .25
+                : screenWidth * .05,
             alignment: Alignment.center,
             child:  AnimatedContainer(
               duration: Duration(seconds: 1),
               curve: Curves.fastLinearToSlowEaseIn,
-              height: index == current_index ? screenWidth * .12 : 0,
-              width: index == current_index ? screenWidth * .23 : 0,
+              height: index == current_index ? screenWidth * .2 : 0,
+              width: index == current_index ? screenWidth * .25 : 0,
               decoration: BoxDecoration(
                 color: index == current_index
                     ? Colors.teal.withOpacity(0.2)
@@ -424,7 +476,7 @@ class _homeState extends State<home> {
             curve: Curves.fastLinearToSlowEaseIn,
             width: index == current_index
                 ? screenWidth * .31
-                : screenWidth * .18,
+                : screenWidth * .15,
             alignment: Alignment.center,
             child: Stack(
               children: [
@@ -464,7 +516,7 @@ class _homeState extends State<home> {
                     ),
                     Icon(
                       listOfIcons[index],
-                      size: screenWidth * .076,
+                      size: screenWidth * .072,
                       color: index == current_index
                           ? barcolor[index]
                           : Colors.white60,
@@ -475,6 +527,163 @@ class _homeState extends State<home> {
             ),
           ),
         ],
+      ),
+    );
+  }
+  Widget Cart_product( products p,index)
+  {
+    return GestureDetector(
+      onTap: (){
+
+      },
+      child: Container(
+        decoration: BoxDecoration(
+
+          borderRadius: BorderRadius.circular(screenWidth*0.05),
+          color: index%2==0? Colors.black12:Color.fromRGBO(1, 126, 120, 1.0),
+        ),
+        height: screenWidth*0.4,
+        child: Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Container(
+                        width: screenWidth*0.4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(screenWidth*0.05),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(screenWidth*0.05),
+                          child: Image.network(p.product_img,fit: BoxFit.cover,),
+                        ),
+                      ),
+                      Container(
+                        width: screenWidth*0.13,
+                        height: screenWidth*0.13,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(topLeft:Radius.circular(screenWidth*0.05),
+                              bottomRight: Radius.circular(screenWidth*0.05),
+                          ),
+                          color: Colors.black,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${p.product_price} \$ ',
+                            style: TextStyle(
+                              fontFamily: 'fastForward',
+                              fontSize: screenWidth*0.02,
+                              color: Color.fromRGBO(225, 162, 1, 1.0),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(width: screenWidth*0.05,),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${p.product_name}',
+                          style: TextStyle(
+                            fontFamily: 'Amperzand',
+                            fontSize: screenWidth*0.07,
+                            fontWeight: FontWeight.w200,
+                            color: index%2==0?Colors.black:Colors.white,
+                          ),
+                        ),
+                        Text(
+                          '${p.amount}',
+                          style: TextStyle(
+                            fontSize: screenWidth*0.05,
+                            fontWeight: FontWeight.w100,
+                            fontFamily: 'Sweety',
+                            color:Colors.grey
+                          ),
+                        ),
+                        SizedBox(
+                          height: screenWidth*0.01,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: (){
+                                setState(() {
+                                  p.amount++;
+                                });
+                              },
+                              child: Container(
+                                width: screenWidth*0.1,
+                                height: screenWidth*0.1,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black,
+                                ),
+                                child: Icon(Icons.add,color: Colors.white,),
+                              ),
+                            ),
+                            SizedBox(width: screenWidth*0.015,),
+                            GestureDetector(
+                              onTap: (){
+                                setState(() {
+                                  p.amount >1?p.amount--:p.amount;
+                                });
+                              },
+                              child: Container(
+                                width: screenWidth*0.1,
+                                height: screenWidth*0.1,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black,
+                                ),
+                                child: Icon(Icons.remove,color: Colors.white,),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: screenWidth*0.05,),
+                ],
+              ),
+            ),
+            Container(
+              width: screenWidth*0.13,
+              height: screenWidth*0.13,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topRight:Radius.circular(screenWidth*0.05),
+                  bottomLeft: Radius.circular(screenWidth*0.05),
+                ),
+                color: Colors.grey.withOpacity(0.5),
+              ),
+              child: Center(
+                child: IconButton(onPressed: (){
+                  setState(() {
+                    p.cart=!p.cart;
+                    if(!p.cart)
+                      cart.remove(p);
+                  });
+                },
+                  icon: Icon(
+                    Icons.shopping_cart_sharp,
+                    color: p.cart? Colors.lightBlueAccent:Colors.white70,
+                    size: screenWidth*0.06,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        )
       ),
     );
   }
