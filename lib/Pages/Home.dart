@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:ecommerce/Classes/Categories.dart';
+import 'package:ecommerce/Pages/product.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:ecommerce/Classes/products.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:image_picker/image_picker.dart';
 
 import '../Classes/Personal_info.dart';
+import 'Category.dart';
 class home extends StatefulWidget {
   const home({super.key});
 
@@ -52,11 +55,18 @@ class _homeState extends State<home> {
   String Image_url= "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500";
   int current_index=0;
   List<IconData> navbar_icons=[FontAwesomeIcons.home,MdiIcons.earth,MdiIcons.cartOutline,FontAwesomeIcons.userCircle];
-  List<products> fav=[];
-  List<products> cart=[];
   List<products> home_products=[
-    products('Cookies', 50, 'https://th.bing.com/th/id/OIP.6e8n0Naqmwjg-IbT1UjkewHaE6?pid=ImgDet&rs=1','Food',false,false ),
-    products('Cookies', 50, 'https://th.bing.com/th/id/OIP.6e8n0Naqmwjg-IbT1UjkewHaE6?pid=ImgDet&rs=1','Food' ,false,false),
+    products('Cookies', 50, 'https://th.bing.com/th/id/OIP.6e8n0Naqmwjg-IbT1UjkewHaE6?pid=ImgDet&rs=1','Food',false,false,
+    "A cookie is a small sweet, crispy or cake-like pastry most often made with flour, sugar, liquid and fat. They are characterized by:"),
+    products('Cookies', 50, 'https://th.bing.com/th/id/OIP.6e8n0Naqmwjg-IbT1UjkewHaE6?pid=ImgDet&rs=1','Food' ,false,false,
+    "Cookies are baked treats. A cookie is a small sweet, crispy or cake-like pastry most often made with flour, sugar, liquid and fat. They are characterized by:"),
+  ];
+  List<Catego> cat=[
+    Catego("Food", "Assets/Images/food category.jpg"),
+    Catego("Cloth", "Assets/Images/clothes.jpg"),
+    Catego("Mobiles", "Assets/Images/Moblie category.jpg"),
+    Catego("LapTop", "Assets/Images/laptop.jpg"),
+    Catego("Books", "Assets/Images/book.jpg"),
   ];
   IconData pass_eye=MdiIcons.eyeLock;
   bool eye_pressed=false;
@@ -69,13 +79,14 @@ class _homeState extends State<home> {
   TextEditingController password=TextEditingController();
   Person_info person=Person_info("Loay Mohamed", "01121510042", "looay432@gmail.com","2001369105694");
   String profile_image_path='';
+  bool product_opend=false;
 
   @override
   Widget build(BuildContext context) {
     final screenWidth1 = MediaQuery.of(context).size.width;
     screenWidth=screenWidth1;
     List<Widget> Slidshow=slideShow.map((url) =>Image.asset(url),).toList();
-    List<Widget> pages=[home_page(screenWidth1, Slidshow,home_products),fav_page(screenWidth1,home_products),Container(),cart_page(screenWidth,home_products),profile(person)];
+    List<Widget> pages=[home_page(screenWidth1, Slidshow,home_products),fav_page(screenWidth1,home_products),category_page(),cart_page(screenWidth,home_products),profile(person)];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -145,7 +156,7 @@ class _homeState extends State<home> {
         ]
       ),
 
-      body: Container(
+      body:Container(
         color: Colors.white,
         child: pages.elementAt(current_index),
       ),
@@ -172,7 +183,9 @@ class _homeState extends State<home> {
   {
     return GestureDetector(
       onTap: (){
-
+        setState(() {
+          Navigator.push(context,MaterialPageRoute(builder: (context)=>ProductDetails(p,person)));
+        });
       },
       child: Container(
         decoration: BoxDecoration(
@@ -235,7 +248,7 @@ class _homeState extends State<home> {
                       IconButton(onPressed: (){
                         setState(() {
                           p.cart=!p.cart;
-                          p.cart?cart.add(p):cart.remove(p);
+                          p.cart?person.cart.add(p):person.cart.remove(p);
                         });
                       },
                         icon: Icon(
@@ -256,7 +269,7 @@ class _homeState extends State<home> {
                         onPressed: (){
                           setState(() {
                             p.fav=!p.fav;
-                            p.fav?fav.add(p):fav.remove(p);
+                            p.fav?person.fav.add(p):person.fav.remove(p);
                           });
                         },
                         icon: Icon(
@@ -327,13 +340,14 @@ class _homeState extends State<home> {
                   bottom: 20.0,
                 ),
                 child: Container(
-                  height: screenWidth*0.6,
+                  width: screenWidth*0.89,
+                  height: screenWidth*0.5,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(screenWidth*0.2),
+                    borderRadius: BorderRadius.circular(screenWidth*0.1),
 
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(screenWidth*0.2),
+                    borderRadius: BorderRadius.circular(screenWidth*0.1),
                     child: ImageSlideshow(
                       children: Slidshow,
                       autoPlayInterval: 4000,
@@ -420,11 +434,11 @@ class _homeState extends State<home> {
         child: Column(
           children: [
             ListView.separated(
-              itemBuilder: (context,index1)=>product(fav[index1]),
+              itemBuilder: (context,index1)=>product(person.fav[index1]),
               separatorBuilder: (context,index)=>const SizedBox(
                 height: 20.0,
               ),
-              itemCount: fav.length,
+              itemCount: person.fav.length,
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,),
           ],
@@ -432,7 +446,27 @@ class _homeState extends State<home> {
       ),
     );
   }
-
+  Widget category_page()
+  {
+    return Padding(
+      padding: EdgeInsetsDirectional.all(20.0),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            ListView.separated(
+              itemBuilder: (context,index1)=>category(cat[index1]),
+              separatorBuilder: (context,index)=>const SizedBox(
+                height: 20.0,
+              ),
+              itemCount: cat.length,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,),
+          ],
+        ),
+      ),
+    );
+  }
   Widget cart_page(screenWidth,home_products)
   {
     return Padding(
@@ -442,13 +476,48 @@ class _homeState extends State<home> {
         child: Column(
           children: [
             ListView.separated(
-              itemBuilder: (context,index1)=>Cart_product(cart[index1],index1),
+              itemBuilder: (context,index1)=>Cart_product(person.cart[index1],index1),
               separatorBuilder: (context,index)=>const SizedBox(
                 height: 20.0,
               ),
-              itemCount: cart.length,
+              itemCount: person.cart.length,
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget category(Catego C)
+  {
+    return InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>category_product(home_products,person,C.name)));
+      },
+      child: Container(
+        height: screenWidth*0.6,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(screenWidth*0.1),
+        ),
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(screenWidth*0.1),
+                child: Image.asset(C.pic,fit: BoxFit.cover,)
+            ),
+            Container(
+              height: screenWidth*0.2,
+              child: Text(
+                '${C.name}',
+                style: TextStyle(
+                  fontFamily: "Sweety",
+                  fontSize: screenWidth*0.09,
+                  color: Colors.white
+                ),
+              ),
+            )
           ],
         ),
       ),
@@ -687,7 +756,7 @@ class _homeState extends State<home> {
                   setState(() {
                     p.cart=!p.cart;
                     if(!p.cart)
-                      cart.remove(p);
+                      person.cart.remove(p);
                   });
                 },
                   icon: Icon(
@@ -700,6 +769,369 @@ class _homeState extends State<home> {
             ),
           ],
         )
+      ),
+    );
+  }
+  Widget product_info(products p)
+  {
+    List<Color> size_color=[Colors.black12,Colors.black12,Colors.black12];
+    List <bool> size_pressed=[false,false,false];
+    int counter = 0;
+    bool addedToFavorite = false;
+    Color favColor = Colors.cyan;
+    
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(screenWidth*0.1),
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Image.network(p.product_img),
+                    Column(
+                      children: [
+                        RatingBar.builder(
+                          itemSize: 30.0,
+                          initialRating: 3,
+                          minRating: 1,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding: EdgeInsetsDirectional.all(4.0),
+                          itemBuilder: (context, _) => Icon(
+                            FontAwesomeIcons.solidHeart,
+                            color: Colors.white60,
+                          ),
+                          onRatingUpdate: (rating) {
+                            print(rating);
+                          },
+                        ),
+                        SizedBox(height: screenWidth*0.05,)
+                      ],
+                    ),
+                  ],
+                )
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                "${p.product_price} \$",
+                style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 20,
+                    fontFamily: "fastForward"
+                ),
+              ),
+              Row(
+                children: [
+                  InkWell(
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: (){
+                      setState(() {
+                        size_pressed[0]=true;
+                        size_pressed.fillRange(1,3,false);
+                        size_color[0]=size_pressed[0]?Colors.black:Colors.black12;
+                        size_color[1]=size_pressed[1]?Colors.black:Colors.black12;
+                        size_color[2]=size_pressed[2]?Colors.black:Colors.black12;
+                      });
+                    },
+                    child: Container(
+                      height: screenWidth*0.19,
+                      width: screenWidth*0.16,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(screenWidth*0.05),
+                        border: Border.all(width: 1.5,color:size_color[0]),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'S',
+                          style: TextStyle(
+                            fontFamily: "fastForward",
+                            fontSize: screenWidth*0.04,
+                            color: size_color[0],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: screenWidth*0.05,),
+                  InkWell(
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: (){
+                      setState(() {
+                        size_pressed.fillRange(0,3,false);
+                        size_pressed[1]=true;
+                        size_color[0]=size_pressed[0]?Colors.black:Colors.black12;
+                        size_color[1]=size_pressed[1]?Colors.black:Colors.black12;
+                        size_color[2]=size_pressed[2]?Colors.black:Colors.black12;
+                      });
+                    },
+                    child: Container(
+                      height: screenWidth*0.19,
+                      width: screenWidth*0.16,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(screenWidth*0.05),
+                        border: Border.all(width: 1.5,color:size_color[1]),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'L',
+                          style: TextStyle(
+                            fontFamily: "fastForward",
+                            fontSize: screenWidth*0.04,
+                            color: size_color[1],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: screenWidth*0.05,),
+                  InkWell(
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: (){
+                      setState(() {
+                        size_pressed.fillRange(0,3,false);
+                        size_pressed[2]=true;
+                        size_color[0]=size_pressed[0]?Colors.black:Colors.black12;
+                        size_color[1]=size_pressed[1]?Colors.black:Colors.black12;
+                        size_color[2]=size_pressed[2]?Colors.black:Colors.black12;
+                      });
+                    },
+                    child: Container(
+                      height: screenWidth*0.19,
+                      width: screenWidth*0.16,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(screenWidth*0.05),
+                        border: Border.all(width: 1.5,color:size_color[2]),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'XL',
+                          style: TextStyle(
+                            fontFamily: "fastForward",
+                            fontSize: screenWidth*0.04,
+                            color: size_color[2],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+          const SizedBox(height: 20,),
+          Padding(
+            padding: const EdgeInsetsDirectional.symmetric(horizontal: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(18.0),
+                  width: 80,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(1, 56, 36, 1.0),
+                    borderRadius: const BorderRadius.all(Radius.circular(40.0)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.star,
+                        color: Colors.white,
+                      ),
+                      SizedBox(width: 10.0,),
+                      Text(
+                        "${p.rating}",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(18.0),
+                  width: 80,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(0, 54, 39, 1.0),
+                    borderRadius: const BorderRadius.all(Radius.circular(80.0)),
+                  ),
+                  child: GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        p.fav=!p.fav;
+                        p.fav?person.fav.add(p):person.fav.remove(p);
+                      });
+                    },
+                    child: Container(
+                      child: Icon(
+                        p.fav ? Icons.star : Icons.star_border,
+                        color: Colors.amber,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 10,),
+                Container(
+                  width: 350,
+
+                  child:  ExpansionTile(
+                    title: Text(
+                      "Description",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                      ),
+                    ),
+                    children: [
+                      Text(
+                        //widget.product.description,
+                        "${p.description}",
+                        style:  TextStyle(
+                            height: 1.5,
+                            wordSpacing: 5,
+                            color: Colors.black54,
+                            fontSize: 20,
+                            fontFamily: "Amperzand"
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 350,
+                  child: const ExpansionTile(
+                    title: Text(
+                      "Returned Policy",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                      ),
+                    ),
+                    children: [
+                      Text(
+                        //widget.product.policy,
+                        "Returned Policy here",
+                        style: TextStyle(
+                            height: 1.5,
+                            wordSpacing: 5,
+                            color: Colors.black54,
+                            fontSize: 20,
+                            fontFamily: "Amperzand"),
+
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(
+                  color: Colors.grey.shade300,
+                  thickness: 1,
+                ),
+                const SizedBox(height: 20,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      height: 38,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.all(Radius.circular(40.0)),
+                        border: Border.all(
+                          width: 1,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          TextButton(
+                            onPressed: (){
+                              setState(() {
+                                if(counter > 0) {
+                                  counter--;
+                                }
+                              });
+                            },
+                            child: const Text(
+                              "-",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "$counter",
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 20
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: (){
+                              setState(() {
+                                counter++;
+                              });
+                            },
+                            child: const Text(
+                              "+",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: (){
+                        setState(() {
+                          p.cart=true;
+                          person.cart.add(p);
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.cyan.shade500,
+                        shape: const StadiumBorder(),
+                      ),
+                      child: const Text(
+                        "add to cart",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1090,7 +1522,7 @@ class _homeState extends State<home> {
         }
       );
     }
-    wallpaper() async{
+  wallpaper() async{
       XFile? image_file= await ImagePicker().pickImage(source: ImageSource.gallery,imageQuality: 10);
       if(image_file!=null)
         return image_file.path;
