@@ -1,71 +1,30 @@
-import 'package:ecommerce/Classes/Personal_info.dart';
 import 'package:ecommerce/Classes/products.dart';
-import 'package:ecommerce/Pages/product.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../Classes/Personal_info.dart';
+import '../Pages/product.dart';
 
-class category_product extends StatefulWidget {
-  final List <products> p;
+class Product_widget extends StatefulWidget {
   final Person_info user;
-  final String category_name;
-  double screenWidth=0;
-  category_product(this.p,this.user,this.category_name);
-
+  final products product;
+  const Product_widget(this.product,this.user);
 
   @override
-  State<category_product> createState() => _category_productState();
+  State<Product_widget> createState() => _Product_widgetState();
 }
 
-class _category_productState extends State<category_product> {
+class _Product_widgetState extends State<Product_widget> {
+ double screenWidth=0;
   @override
   Widget build(BuildContext context) {
     final screenWidth1 = MediaQuery.of(context).size.width;
-    widget.screenWidth=screenWidth1;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.category_name,
-          style: const TextStyle(
-            fontSize: 40,
-            fontFamily: "Sweety",
-            color: Colors.black12,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading:  BackButton(
-          color: Colors.cyan,
-          onPressed: (){
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Padding(
-        padding: EdgeInsetsDirectional.all(20.0),
-        child: Column(
-          children: [
-            ListView.separated(
-              itemBuilder: (context,index)=>product(widget.p[index]),
-              separatorBuilder: (context,index)=>const SizedBox(
-                height: 20.0,
-              ),
-              itemCount: widget.p.length,
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,),
-          ],
-        ),
-      ),
-    );
-  }
-  Widget product( products p)
-  {
-    return GestureDetector(
+    screenWidth=screenWidth1;
+    return  GestureDetector(
       onTap: (){
         setState(() {
-          Navigator.push(context,MaterialPageRoute(builder: (context)=>ProductDetails(p,widget.user)));
+          Navigator.push(context,MaterialPageRoute(builder: (context)=>ProductDetails(widget.product,widget.user)));
         });
       },
       child: Container(
@@ -73,21 +32,21 @@ class _category_productState extends State<category_product> {
           borderRadius: BorderRadius.circular(30.0),
           color: Colors.black,
         ),
-        height: widget.screenWidth*0.6,
+        height: screenWidth*0.6,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(30.0),
           child: Stack(
             alignment: Alignment.topCenter,
             children: [
               Container(
-                height: widget.screenWidth*0.6,
+                height: screenWidth*0.6,
                 child: Image.network(
-                  '${p.product_img}',
+                  '${widget.product.product_img}',
                   fit: BoxFit.cover,
                 ),
               ),
               Text(
-                '${p.category}',
+                '${widget.product.category}',
                 style: TextStyle(
                   fontFamily: 'Sweety',
                   color: Colors.white54,
@@ -99,7 +58,7 @@ class _category_productState extends State<category_product> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    '${p.product_name}',
+                    '${widget.product.product_name}',
                     style: TextStyle(
                       fontFamily: 'Arial',
                       color: Colors.white,
@@ -128,18 +87,18 @@ class _category_productState extends State<category_product> {
                     children: [
                       IconButton(onPressed: (){
                         setState(() {
-                          p.cart=!p.cart;
-                          p.cart?widget.user.cart.add(p):widget.user.cart.remove(p);
+                          widget.product.cart=!widget.product.cart;
+                          widget.product.cart?widget.user.cart.add(widget.product):widget.user.cart.remove(widget.product);
                         });
                       },
                         icon: Icon(
                           Icons.shopping_cart_sharp,
-                          color: p.cart? Colors.lightBlueAccent:Colors.white70,
+                          color: widget.product.cart? Colors.lightBlueAccent:Colors.white70,
                           size: 30.0,
                         ),
                       ),
                       Text(
-                        '${p.product_price} \$ ',
+                        '${widget.product.product_price} \$ ',
                         style: TextStyle(
                           fontFamily: 'fastForward',
                           fontSize: 30.0,
@@ -149,13 +108,13 @@ class _category_productState extends State<category_product> {
                       IconButton(
                         onPressed: (){
                           setState(() {
-                            p.fav=!p.fav;
-                            p.fav?widget.user.fav.add(p):widget.user.fav.remove(p);
+                            widget.product.fav=!widget.product.fav;
+                            widget.product.fav?widget.user.fav.add(widget.product):widget.user.fav.remove(widget.user);
                           });
                         },
                         icon: Icon(
                           Icons.favorite,
-                          color: p.fav? Color.fromRGBO(255, 33, 131, 1.0):Colors.white70,
+                          color: widget.product.fav? Color.fromRGBO(255, 33, 131, 1.0):Colors.white70,
                           size: 30.0,
                         ),
                       ),
@@ -167,6 +126,6 @@ class _category_productState extends State<category_product> {
           ),
         ),
       ),
-    );
+    );;
   }
 }
