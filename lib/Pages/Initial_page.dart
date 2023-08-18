@@ -21,13 +21,15 @@ class home extends StatefulWidget {
 class _homeState extends State<home> {
 
 
+  List<products> Top_saling=[products('Cookies', 50, 'https://th.bing.com/th/id/OIP.6e8n0Naqmwjg-IbT1UjkewHaE6?pid=ImgDet&rs=1','Food',false,false,
+      "A cookie is a small sweet, crispy or cake-like pastry most often made with flour, sugar, liquid and fat. They are characterized by:")];
+  List<products> for_you=[];
   double screenWidth=0;
   String app_name='hello';
   bool notification= true;
   Color online=Colors.green;
   String Image_url= "https://images.pexels.com/photos/213780/pexels-photo-213780.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500";
   int current_index=0;
-  List<IconData> navbar_icons=[FontAwesomeIcons.home,MdiIcons.earth,MdiIcons.cartOutline,FontAwesomeIcons.userCircle];
   List<products> home_products=[
     products('Cookies', 50, 'https://th.bing.com/th/id/OIP.6e8n0Naqmwjg-IbT1UjkewHaE6?pid=ImgDet&rs=1','Food',false,false,
     "A cookie is a small sweet, crispy or cake-like pastry most often made with flour, sugar, liquid and fat. They are characterized by:"),
@@ -55,31 +57,29 @@ class _homeState extends State<home> {
   Widget build(BuildContext context) {
     final screenWidth1 = MediaQuery.of(context).size.width;
     screenWidth=screenWidth1;
-    List<Widget> pages=[Home_page(person,home_products),Favourite_page(person),Category_page(person,Categories),Cart_page(person),Profile_page(person)];
+    List<Widget> pages=[Home_page(person,Top_saling,for_you),Favourite_page(person),Category_page(person,Categories),Cart_page(person),Profile_page(person)];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Row(
-          children: [
-            Text(
-              '$app_name',
-              style: const TextStyle(
-                fontFamily: 'Sweety',
-                color: Colors.black,
-                fontSize: 30.0,
-              ),
+        leading: Container(
+          width: screenWidth*0.2,
+          child: Text(
+            '$app_name',
+            style: const TextStyle(
+              fontFamily: 'Sweety',
+              color: Colors.black,
+              fontSize: 27.0,
             ),
-            SizedBox(width: screenWidth1*0.1,),
-            Text(
-              '${listOfStrings[current_index]}',
-              style: const TextStyle(
-                fontFamily: 'Sweety',
-                color: Colors.grey,
-                fontSize: 30.0,
-              ),
-            ),
-
-          ],
+          ),
+        ),
+        centerTitle: true,
+        title: Text(
+          '${listOfStrings[current_index]}',
+          style: const TextStyle(
+            fontFamily: 'Sweety',
+            color: Colors.grey,
+            fontSize: 30.0,
+          ),
         ) ,
         elevation: 0,
         actions: [IconButton(

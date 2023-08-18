@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 class category_product extends StatefulWidget {
   final List <products> p;
   final Person_info user;
@@ -19,6 +18,9 @@ class category_product extends StatefulWidget {
 
 class _category_productState extends State<category_product> {
   double screenWidth=0;
+
+  @override
+
   @override
   Widget build(BuildContext context) {
     final screenWidth1 = MediaQuery.of(context).size.width;
@@ -124,13 +126,9 @@ class _category_productState extends State<category_product> {
             ],
           ),
           CircleAvatar(
-            radius: screenWidth*0.3,
+            radius: screenWidth*0.35,
             backgroundImage: NetworkImage("${p.product_img}"),
-            child: CircleAvatar(
-              radius: screenWidth*0.3,
-              backgroundImage: AssetImage("Assets/Images/green-screen-110341-540p--unscreen.gif"),
-              backgroundColor: Colors.transparent,
-            ),
+
           ),
           Container(
             width: 140*2,
