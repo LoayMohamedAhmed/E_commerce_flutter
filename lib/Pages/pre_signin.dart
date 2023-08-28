@@ -1,4 +1,5 @@
 import 'package:ecommerce/Pages/Initial_page.dart';
+import 'package:ecommerce/Pages/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
@@ -42,7 +43,7 @@ class _Intial_pageState extends State<Intial_page> {
             onVerticalDragUpdate: (dragUpdateDetails) {
               if (dragUpdateDetails.delta.dy < 1) {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => home()));
+                    context, MaterialPageRoute(builder: (context) => Login()));
               }
             },
             child: Container(

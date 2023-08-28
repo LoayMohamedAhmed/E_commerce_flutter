@@ -178,10 +178,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_image_slideshow
-      sha256: "20aea73c6e6b050297b34fc30f53c97d7e6aaf3f7719b48ed399a6a7da3071fc"
+      sha256: ed259d96aea889b6ddc2b641891c3b721ec8ed33e160f08f2ef11acf0438984f
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.0"
+    version: "0.1.6"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -460,10 +460,10 @@ packages:
     dependency: transitive
     description:
       name: platform
-      sha256: "4a451831508d7d6ca779f7ac6e212b4023dd5a7d08a27a63da33756410e32b76"
+      sha256: "57c07bf82207aee366dfaa3867b3164e4f03a238a461a11b0e8a3a510d51203d"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.0"
+    version: "3.1.1"
   plugin_platform_interface:
     dependency: transitive
     description:

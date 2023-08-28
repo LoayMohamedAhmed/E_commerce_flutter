@@ -1,6 +1,6 @@
 import 'package:ecommerce/Pages/pre_signin.dart';
 import 'package:flutter/material.dart';
-
+import 'package:ecommerce/Pages/login.dart';
 import 'pages/Initial_page.dart';
 
 void main() {
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home:Intial_page(),
+      home:home(),
     );
   }
 }

@@ -109,7 +109,8 @@ class _Product_widgetState extends State<Product_widget> {
                         onPressed: (){
                           setState(() {
                             widget.product.fav=!widget.product.fav;
-                            widget.product.fav?widget.user.fav.add(widget.product):widget.user.fav.remove(widget.user);
+                            widget.product.fav?widget.user.fav.add(widget.product):widget.user.fav.remove(widget.product);
+                            print(widget.user.fav.length);
                           });
                         },
                         icon: Icon(

@@ -20,8 +20,7 @@ class home extends StatefulWidget {
 
 class _homeState extends State<home> {
 
-
-  List<products> Top_saling=[products('Cookies', 50, 'https://th.bing.com/th/id/OIP.6e8n0Naqmwjg-IbT1UjkewHaE6?pid=ImgDet&rs=1','Food',false,false,
+  List<products> Top_saling=[products('Cookies', 50, 'https://drive.google.com/uc?export=view&id=10SQ038lYnBH7fwJIjM2fJobkeRGWhH5K','Food',false,false,
       "A cookie is a small sweet, crispy or cake-like pastry most often made with flour, sugar, liquid and fat. They are characterized by:")];
   List<products> for_you=[];
   double screenWidth=0;
